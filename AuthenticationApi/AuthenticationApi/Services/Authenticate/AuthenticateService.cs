@@ -13,13 +13,13 @@ namespace AuthenticationApi.Services.Authenticate
         {
             _dapperUtility = dapperUtility;
         }
-        public Task<UserTokenVM> GetTokenByUserIdAsync(Guid userId)
+        public async Task<UserTokenVM> GetTokenByUserIdAsync(Guid userId)
         {
             var sql = "GetToken_SP";
             using (var connection=_dapperUtility.DapperConnection())
             {
-                var resault = connection.QuerySingleOrDefaultAsync<UserTokenVM>(sql, new { UserId = userId }, commandType: CommandType.StoredProcedure);
-                return resault;
+                var userTokenVM = await connection.QuerySingleOrDefaultAsync<UserTokenVM>(sql, new { UserId = userId }, commandType: CommandType.StoredProcedure);
+                return userTokenVM;  
             }
         }
 

@@ -65,5 +65,32 @@ namespace AuthenticationApi.Controllers.V1
             }
             return Ok(info);
         }
+        [HttpPost("newToken")]
+        public async Task<IActionResult> PostNewToken(string refreshToken)
+        {
+            Guid userId = Guid.Parse(User.Claims.SingleOrDefault(q => q.Type == "UserId").Value);
+            var userRefreshToken=await _authenticateService.GetTokenByUserIdAsync(userId);
+            var refreshTokenTimeout = _configuration.GetValue<int>("RefreshTokenTimeOut");
+            
+            if (userRefreshToken == null) { return BadRequest("Invalid Request"); }
+
+            if (userRefreshToken.RefreshToken != refreshToken) { return BadRequest("Invalid RefreshToken"); }
+
+            if (!userRefreshToken.IsValid) return BadRequest("Invalid RefreshToken");
+
+            if (userRefreshToken.GenerateDate.AddMinutes(refreshTokenTimeout) < DateTime.Now) return BadRequest("expier token");
+
+            var newToken = _tokenUtility.TokenGenerator(userId);
+            var newRefreshToken=Guid.NewGuid();
+            var userToken = new UserTokenVM
+            {
+                UserId = userId,
+                RefreshToken = refreshToken.ToString(),
+                GenerateDate = DateTime.Now,
+                IsValid = true,
+            };
+            await _authenticateService.UpdateTokenAsync(userToken);
+            return Ok(new {Token=newToken,RefreshToken=newRefreshToken});
+        }
     }
 }

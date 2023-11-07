@@ -54,10 +54,10 @@ builder.Services.AddSwaggerGen(config =>
 
 #region Ioc
 builder.Services.AddSingleton<EncryptionUtility>();
-builder.Services.AddSingleton<DapperUtility>();
-builder.Services.AddSingleton<TokenUtility>();
-builder.Services.AddSingleton<IUserService,UserService>();
-builder.Services.AddSingleton<IAuthenticateService,AuthenticateService>();
+builder.Services.AddScoped<DapperUtility>();
+builder.Services.AddScoped<TokenUtility>();
+builder.Services.AddScoped<IUserService,UserService>();
+builder.Services.AddScoped<IAuthenticateService,AuthenticateService>();
 #endregion
 
 #region Token Auth
