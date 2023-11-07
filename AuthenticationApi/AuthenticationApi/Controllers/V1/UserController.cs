@@ -1,12 +1,14 @@
 ﻿using AuthenticationApi.Models.ViewModels;
 using AuthenticationApi.Services.User;
 using AuthenticationApi.Utils;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AuthenticationApi.Controllers.V1
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;

@@ -1,5 +1,7 @@
+using AuthenticationApi.Services.Authenticate;
 using AuthenticationApi.Services.User;
 using AuthenticationApi.Utils;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -53,7 +55,9 @@ builder.Services.AddSwaggerGen(config =>
 #region Ioc
 builder.Services.AddSingleton<EncryptionUtility>();
 builder.Services.AddSingleton<DapperUtility>();
+builder.Services.AddSingleton<TokenUtility>();
 builder.Services.AddSingleton<IUserService,UserService>();
+builder.Services.AddSingleton<IAuthenticateService,AuthenticateService>();
 #endregion
 
 #region Token Auth
