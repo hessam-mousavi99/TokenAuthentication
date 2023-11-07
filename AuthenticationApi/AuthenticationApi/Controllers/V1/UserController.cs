@@ -2,13 +2,16 @@
 using AuthenticationApi.Services.User;
 using AuthenticationApi.Utils;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AuthenticationApi.Controllers.V1
 {
-    [Route("api/[controller]")]
+
     [ApiController]
-    [Authorize]
+    [ApiVersion("1")]
+    [Route("api/v{version:apiVersion}/[controller]")]
+    [EnableCors(CorsPolicyKeys.Policy_A)]
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -39,8 +42,8 @@ namespace AuthenticationApi.Controllers.V1
             }
             return Ok(user);
         }
-        [HttpPost]
-        public async Task<IActionResult> Post(UserVM user)
+        [HttpPost("Register")]
+        public async Task<IActionResult> Post(RegisterViewModel user)
         {
             var HashPass = _encryptionUtility.HashSHA256(user.Password);
             var model = new UserVM
@@ -55,6 +58,7 @@ namespace AuthenticationApi.Controllers.V1
             await _userService.InsertUserAsync(model);
             return Ok(model);
         }
+        [Authorize]
         [HttpPut("update-user/{email}")]
         public async Task<IActionResult> Put(string email,UpdateUserVM user)
         {
@@ -63,6 +67,7 @@ namespace AuthenticationApi.Controllers.V1
             await _userService.UpdateUserAsync(model.Id, user);
             return Ok(user);
         }
+        [Authorize]
         [HttpDelete("delete-user/{email}")]
         public async Task<IActionResult> delete(string email)
         {

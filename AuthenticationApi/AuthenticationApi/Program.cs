@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Reflection;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -50,14 +51,28 @@ builder.Services.AddSwaggerGen(config =>
             new string[] {}
         }
     });
+
+    config.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Version = "1",
+        Title = "AuthenticationApi v1",
+        Description = "Authorization with Token And Refresh Token",
+        Contact = new OpenApiContact
+        {
+            Name = "Hessam Mousavi",
+            Email = "Hessam.mousavi99@gmail.com"
+        }
+    });
+    config.OperationFilter<RemoveVersionFromParameter>();
+    config.DocumentFilter<ReplaceVersionWithExactValueInPath>();
 });
 
 #region Ioc
 builder.Services.AddSingleton<EncryptionUtility>();
 builder.Services.AddScoped<DapperUtility>();
 builder.Services.AddScoped<TokenUtility>();
-builder.Services.AddScoped<IUserService,UserService>();
-builder.Services.AddScoped<IAuthenticateService,AuthenticateService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IAuthenticateService, AuthenticateService>();
 #endregion
 
 #region Token Auth

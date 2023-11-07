@@ -2,12 +2,16 @@
 using AuthenticationApi.Services.Authenticate;
 using AuthenticationApi.Services.User;
 using AuthenticationApi.Utils;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AuthenticationApi.Controllers.V1
 {
-    [Route("api/[controller]")]
+    
     [ApiController]
+    [ApiVersion("1")]
+    [Route("api/v{version:apiVersion}/[controller]")]
+    [EnableCors(CorsPolicyKeys.Policy_A)]
     public class AuthenticateController : ControllerBase
     {
         private readonly IAuthenticateService _authenticateService;
@@ -24,7 +28,7 @@ namespace AuthenticationApi.Controllers.V1
             _encryptionUtility = encryptionUtility;
             _tokenUtility = tokenUtility;
         }
-        [HttpPost]
+        [HttpPost("login")]
         public async Task<IActionResult> Post(LoginVM login)
         {
             var user = await _userService.GetUserByEmailAsync(login.Email);
