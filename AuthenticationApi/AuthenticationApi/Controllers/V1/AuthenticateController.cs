@@ -2,14 +2,12 @@
 using AuthenticationApi.Services.Authenticate;
 using AuthenticationApi.Services.User;
 using AuthenticationApi.Utils;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AuthenticationApi.Controllers.V1
 {
-    
+
     [ApiController]
     [ApiVersion("1")]
     [Route("api/v{version:apiVersion}/[controller]")]

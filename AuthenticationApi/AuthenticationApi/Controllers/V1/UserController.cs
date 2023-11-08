@@ -2,17 +2,11 @@
 using AuthenticationApi.Services.User;
 using AuthenticationApi.Utils;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AuthenticationApi.Controllers.V1
 {
-
-    [ApiController]
-    [ApiVersion("1")]
-    [Route("api/v{version:apiVersion}/[controller]")]
-    [EnableCors(CorsPolicyKeys.Policy_A)]
-    public class UserController : ControllerBase
+    public class UserController : BaseController
     {
         private readonly IUserService _userService;
         private readonly EncryptionUtility _encryptionUtility;

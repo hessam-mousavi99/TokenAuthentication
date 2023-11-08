@@ -1,8 +1,11 @@
+using AuthenticationApi.Data;
 using AuthenticationApi.Services.Authenticate;
+using AuthenticationApi.Services.Permission;
 using AuthenticationApi.Services.User;
 using AuthenticationApi.Utils;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
@@ -18,6 +21,13 @@ builder.Services.AddApiVersioning(config =>
     config.DefaultApiVersion = new Microsoft.AspNetCore.Mvc.ApiVersion(1, 0);
     config.AssumeDefaultVersionWhenUnspecified = true;
     config.ReportApiVersions = true;
+});
+#endregion
+
+#region DB
+builder.Services.AddDbContext<AuthenticationApiDbContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("ConnStrEf"));
 });
 #endregion
 
@@ -73,6 +83,8 @@ builder.Services.AddScoped<DapperUtility>();
 builder.Services.AddScoped<TokenUtility>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAuthenticateService, AuthenticateService>();
+builder.Services.AddScoped<IPermissionService, PermissionService>();
+
 #endregion
 
 #region Token Auth
