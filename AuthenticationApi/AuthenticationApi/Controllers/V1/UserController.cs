@@ -42,22 +42,6 @@ namespace AuthenticationApi.Controllers.V1
             }
             return Ok(user);
         }
-        [HttpPost("Register")]
-        public async Task<IActionResult> Post(RegisterViewModel user)
-        {
-            var HashPass = _encryptionUtility.HashSHA256(user.Password);
-            var model = new UserVM
-            {
-                Id = Guid.NewGuid(),
-                Email = user.Email,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Password = HashPass,
-                IsActive = true
-            };
-            await _userService.InsertUserAsync(model);
-            return Ok(model);
-        }
         [Authorize]
         [HttpPut("update-user/{email}")]
         public async Task<IActionResult> Put(string email,UpdateUserVM user)

@@ -1,11 +1,10 @@
 using AuthenticationApi.Services.Authenticate;
 using AuthenticationApi.Services.User;
 using AuthenticationApi.Utils;
-using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using System.Reflection;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,6 +22,7 @@ builder.Services.AddApiVersioning(config =>
 #endregion
 
 builder.Services.AddEndpointsApiExplorer();
+
 builder.Services.AddSwaggerGen(config =>
 {
     config.ResolveConflictingActions(api => api.First());

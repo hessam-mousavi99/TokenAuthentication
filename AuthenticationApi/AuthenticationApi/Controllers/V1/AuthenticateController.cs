@@ -2,6 +2,8 @@
 using AuthenticationApi.Services.Authenticate;
 using AuthenticationApi.Services.User;
 using AuthenticationApi.Utils;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
@@ -29,7 +31,7 @@ namespace AuthenticationApi.Controllers.V1
             _tokenUtility = tokenUtility;
         }
         [HttpPost("login")]
-        public async Task<IActionResult> Post(LoginVM login)
+        public async Task<IActionResult> PostLogin(LoginVM login)
         {
             var user = await _userService.GetUserByEmailAsync(login.Email);
             if (user == null)
@@ -68,6 +70,22 @@ namespace AuthenticationApi.Controllers.V1
                 await _authenticateService.UpdateTokenAsync(userToken);
             }
             return Ok(info);
+        }
+        [HttpPost("register")]
+        public async Task<IActionResult> PostRegister(RegisterViewModel user)
+        {
+            var HashPass = _encryptionUtility.HashSHA256(user.Password);
+            var model = new UserVM
+            {
+                Id = Guid.NewGuid(),
+                Email = user.Email,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Password = HashPass,
+                IsActive = true
+            };
+            await _userService.InsertUserAsync(model);
+            return Ok(model);
         }
         [HttpPost("newToken")]
         public async Task<IActionResult> PostNewToken(string refreshToken)
