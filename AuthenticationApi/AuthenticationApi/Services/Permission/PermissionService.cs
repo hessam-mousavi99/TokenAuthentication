@@ -2,6 +2,7 @@
 using AuthenticationApi.Utils;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 
 namespace AuthenticationApi.Services.Permission
 {
@@ -16,14 +17,17 @@ namespace AuthenticationApi.Services.Permission
 
         public async Task<List<int>> GetPermissionsByRoleIdAsync(int roleId)
         {
-            var sql = @"Select PermissionId from RolePermissions  where RoleId=@RoleId";
-
+            var sql = @"Select * from RolePermissions  where RoleId=@RoleId";
+            List<int> permissionIds = new List<int>();
             using (var connection = _dapperUtility.DapperConnection())
             {
-                 var permissions=await connection.QuerySingleOrDefaultAsync(sql, new {RoleId=roleId});
-                return permissions;
+                var rolePermission = await connection.QueryAsync<RolePermission>(sql, new { RoleId = roleId });
+                foreach (var item in rolePermission)
+                {
+                    permissionIds.Add(item.PermissionId);
+                }
+                return permissionIds;
             }
-
         }
 
         public async Task InsertPermissionsAsync(List<Entities.Permission> models)
@@ -41,17 +45,15 @@ namespace AuthenticationApi.Services.Permission
             }
         }
 
-        public async Task InsertRolePermissionAsync(List<RolePermission> models)
+        public async Task InsertRolePermissionAsync(int roleid, int selectedPermission)
         {
             var sql = @"Insert RolePermissions (RoleId,PermissionId)
                         Values (@RoleId,@PermissionId)";
-            if (models != null)
+            using (var connection = _dapperUtility.DapperConnection())
             {
-                using (var connection = _dapperUtility.DapperConnection())
-                {
-                    await connection.ExecuteAsync(sql, models);
-                }
+                await connection.ExecuteAsync(sql, new { RoleId = roleid, PermissionId = selectedPermission });
             }
+
         }
     }
 }

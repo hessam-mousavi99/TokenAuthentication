@@ -62,21 +62,15 @@ namespace AuthenticationApi.Controllers.V1
         [HttpPost("SaveRolePermissions")]
         public async Task<IActionResult> PostSaveRolePermissions(AddRolePermissionVM model)
         {
-            var RPs = new List<RolePermission>();
             var rolePermissions = await _context.RolePermissions.Where(q => q.RoleId == model.RoleId).ToListAsync();
 
             foreach (var permissionId in model.SelectedPermissions)
             {
                 if (!rolePermissions.Any(q => q.PermissionId == permissionId))
                 {
-                    RPs.Add(new RolePermission()
-                    {
-                        RoleId = model.RoleId,
-                        PermissionId = permissionId
-                    });
+                    await _permissionService.InsertRolePermissionAsync(model.RoleId, permissionId);
                 }
             }
-            await _permissionService.InsertRolePermissionAsync(RPs);
             return Ok();
         }
         [HttpGet("RolePermissions/{roleId}")]
